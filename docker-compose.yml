@@ -1,14 +1,37 @@
-version: "3"
+version: "3.3"
+
 services:
   memcached:
     image: memcached:latest
-    ports:
-      - "11211:11211"
+    container_name: memcached
+    restart: always
+    expose:
+      - "11211"
+    networks:
+      - internal_net
+
   webapp:
-    build: .
-    ports:
-      - "8888:8888"
+    build: /opt/RootTheBox
+    container_name: scoring-server
+    restart: always
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.scoring.rule=Host(`game.ckf.gg`)"
+      - "traefik.http.routers.scoring.entrypoints=websecure"
+      - "traefik.http.routers.scoring.tls.certresolver=myresolver"
+      - "traefik.docker.network=traefik_traefik_net"
     volumes:
       - ./files:/opt/rtb/files:rw
     environment:
       - COMPOSE_CONVERT_WINDOWS_PATHS=1
+    depends_on:
+      - memcached
+    networks:
+      - internal_net
+      - traefik_traefik_net
+
+networks:
+  internal_net:
+    internal: true
+  traefik_traefik_net:
+    external: true
