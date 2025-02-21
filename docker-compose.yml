@@ -10,16 +10,16 @@ services:
     networks:
       - internal_net
 
-  game:
+  scoring-server:
     build: .
     container_name: scoring-server
     restart: always
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.game.tls=true"
-      - "traefik.http.routers.game.rule=Host(`game.ckf.gg`)"
-      - "traefik.http.routers.game.entrypoints=websecure"
-      - "traefik.http.routers.game.tls.certresolver=myresolver"
+      - "traefik.http.routers.scoring-server.tls=true"
+      - "traefik.http.routers.scoring-server.rule=Host(`game.ckf.gg`)"
+      - "traefik.http.routers.scoring-server.entrypoints=websecure"
+      - "traefik.http.routers.scoring-server.tls.certresolver=myresolver"
       - "traefik.docker.network=traefik_traefik_net"
     volumes:
       - ./files:/opt/rtb/files:rw
